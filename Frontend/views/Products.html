@@ -1,0 +1,50 @@
+<div style="position: fixed;  top: 40%; left: 0; width: 100%; text-align: center; z-index: 1; padding-left: 25%; padding-right: 25%;">
+    <div class="alert" ng-class="Controls.Alert.Class"   role="alert" ng-hide="Controls.Alert.Hide">
+      {{Controls.Alert.Message}}
+    </div>
+</div>
+<div class="container-fluid p-2" style="height: 81.5vh; overflow-y: auto; overflow-x: hidden; margin-bottom: 100px;">
+    <div class="sticky-top">
+        <div class="input-group p-1">
+          <input type="text" class="form-control form-control-sm" placeholder="Search Product" ng-model="SearchProduct" ng-keyup="SearchProductChanged()">
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-5 g-2">
+        <div class="col" ng-repeat="item in Products">
+          <div class="card h-100">
+            <div align="center">
+                <img src="{{'http://localhost:3000/api/downloads?path='+item.ImagePath}}" class="card-img-top" alt="..."  style="height:100px;width:100px">
+            </div>
+            <div class="card-body">
+              <h6 class="card-title" style="width: 100%;" align="center">{{item.Title}}</h6>
+              <small class="card-text">
+                <span class="card-text" style="display: block; width: 100%;" align="center">Price: <b style="color: rgb(90, 90, 249);"><i>{{item.UnitPrice}} BDT</i></b></span>
+                {{item.Description.length<=50 ? item.Description : item.Description.substring(0,47)+"..."}}
+              </small>
+            </div>
+            <div class="card-footer" align="center">
+                <button class="btn btn-sm btn-info" ng-model="AddToCartBTN" ng-click="AddToCartBTNClicked($index)">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Modal -->
+<div class="modal fade" id="addCartModal" tabindex="-1" aria-labelledby="addCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: #edf2f5;">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addCartModalLabel">Place Order</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

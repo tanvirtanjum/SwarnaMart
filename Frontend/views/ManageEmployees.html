@@ -1,0 +1,109 @@
+  <div style="position: fixed;  top: 40%; left: 0; width: 100%; text-align: center; z-index: 1;  padding-left: 25%; padding-right: 25%;">
+    <div class="alert" ng-class="Controls.Alert.Class" role="alert" ng-hide="Controls.Alert.Hide">
+      {{Controls.Alert.Message}}
+    </div>
+  </div>
+  
+  <div class="row" style="min-height: 100%; max-height: 100%;">
+      <div class="col-5 p-2 bg-body-tertiary" style="height: 81.5vh; overflow: auto; margin-bottom: 100px;">
+        <div class="form-floating p-1">
+            <input type="text" class="form-control form-control-sm" id="Name" ng-model="Name" placeholder="FirstName MiddleName LastName">
+            <label for="Name">Full Name</label>
+        </div>
+        <div class="form-floating p-1">
+            <select class="form-select" id="GroupId" ng-model="GroupId" ng-options="item as item.Name for item in Roles track by item.Value" aria-label="Role">
+                <option value="" selected>Open this select menu</option>
+              </select>
+            <label for="GroupId">Role</label>
+        </div>
+        <div class="form-floating p-1">
+            <select class="form-select" id="Gender" ng-model="Gender" ng-options="item as item.Name for item in Genders track by item.Value" aria-label="Gender">
+                <option value="" selected>Open this select menu</option>
+            </select>
+            <label for="Gender">Gender</label>
+        </div>
+        <div class="form-floating p-1">
+            <input type="text" class="form-control form-control-sm" id="Phone" ng-model="Phone" placeholder="+8801*********">
+            <label for="Phone">Phone No.</label>
+        </div>
+        <div class="form-floating p-1">
+            <textarea class="form-control" placeholder="Shipping Address" id="Address" ng-model="Address" style="height: 100px"></textarea>
+            <label for="Address">Address</label>
+        </div>
+        <div class="form-floating p-1">
+            <input type="text" class="form-control form-control-sm" id="RegUserName" ng-model="RegUserName" ng-disabled="Controls.UserName.Disable" placeholder="XYZ" autocomplete="off">
+            <label for="RegUserName">Username</label>
+        </div>
+        <div class="form-floating p-1">
+            <input type="password" class="form-control form-control-sm" id="RegPassword" ng-model="RegPassword" placeholder="Password" autocomplete="off">
+            <label for="RegPassword">Password</label>
+        </div>
+        <div class="input-group p-1">
+            <div class="input-group-text">
+              <input class="form-check-input mt-0" type="checkbox" ng-model="LoginAccess" ng-true-value="1" ng-false-value="0" ng-checked="LoginAccess == 1" aria-label="Checkbox for following text input">
+            </div>
+            <input type="text" class="form-control" value="Active" disabled>
+        </div>
+    
+        <div class="mt-2" align="center">
+            <button type="button" class="btn btn-sm btn-primary" ng-model="SaveBTN" ng-hide="Controls.SaveBTN.Hide" ng-click="SaveBTNClicked()">Save</button>
+            <button type="button" class="btn btn-sm btn-success" ng-model="UpdateBTN" ng-hide="Controls.UpdateBTN.Hide" ng-click="UpdateBTNClicked()">Update</button>
+          </div>
+        </div>
+  
+      <div class="col-7 p-2">
+        <div>
+          <div class="input-group pb-3">
+            <input type="text" class="form-control form-control-sm" placeholder="Search Employee" ng-model="SearchEmployee" ng-keyup="SearchEmployeeChanged()">
+          </div>
+        </div>
+        <div style="height: 71.5vh; overflow: auto;">
+          <table class="table table-sm table-striped table-bordered table-responsive" >
+            <thead style="position: sticky; top: 0; z-index: 1;">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Role</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Access</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-if="Employees.length <= 0">
+                <td colspan="6" align="center">No Data Found</td>
+              </tr>
+              <tr ng-repeat="item in Employees">
+                <th scope="row">{{$index+1}}</th>
+                <td>{{item.Name}}</td>
+                <td>{{item.GroupName}}</td>
+                <td>{{item.Phone}}</td>
+                <td>{{item.LoginAccess == 1 ? 'Active' : 'Blocked'}}</td>
+                <td align="center">
+                  <button type="button" class="btn btn-sm p-1" ng-class="Controls.TableShowHideBTN.Class" ng-if="Controls.EmployeeIndex == null || Controls.EmployeeIndex == $index" ng-click="ShowHideEmployee($index)">{{Controls.TableShowHideBTN.Text}}</button>
+                  <button type="button" class="btn btn-sm btn-danger p-1" ng-if="Controls.EmployeeIndex == null || Controls.EmployeeIndex == $index" ng-click="DeleteEmployee($index, 0)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+  
+  <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: #edf2f5;">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteEmployeeModalLabel">Delete Employee Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ng-click="DeleteEmployee($index, 0)"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this({{Controls.Delete.EmployeeName}}) Employee?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="DeleteEmployee(0, 1)">Confirm</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  

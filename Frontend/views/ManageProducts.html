@@ -1,0 +1,94 @@
+<div style="position: fixed;  top: 40%; left: 0; width: 100%; text-align: center; z-index: 1;  padding-left: 25%; padding-right: 25%;">
+  <div class="alert" ng-class="Controls.Alert.Class" role="alert" ng-hide="Controls.Alert.Hide">
+    {{Controls.Alert.Message}}
+  </div>
+</div>
+
+<div class="row" style="min-height: 100%; max-height: 100%;">
+    <div class="col-5 p-2 bg-body-tertiary" style="height: 81.5vh; overflow: auto; margin-bottom: 100px;">
+    <form id="uploadForm" enctype="multipart/form-data" method="post">
+      <div class="p-1">
+        <label for="Title" class="form-label">Title</label>
+        <input type="text" class="form-control form-control-sm" id="Title" ng-model="Title" placeholder="Product Title">
+      </div>
+      <div class="p-1">
+        <label for="UnitPrice" class="form-label">Price</label>
+        <input type="number" class="form-control form-control-sm" id="UnitPrice" ng-model="UnitPrice" placeholder="Product Price">
+      </div>
+      <div class="p-1" align="center">
+        <img class="img-thumbnail" ng-src="{{PreviewImage}}" ng-show="PreviewImage != null" alt="" style="height:120px;width:120px" />
+      </div>
+      <div class="p-1">
+        <label for="formFile" class="form-label">Choose Image</label>
+        <input type="file" class="form-control form-control-sm" ngf-select ng-model="Avatar" id="Avatar" name="Avatar" onchange="angular.element(this).scope().SelectFile(event)" accept="image/png, image/gif, image/jpeg"/>
+      </div>
+      <div class="p-1">
+        <label for="Description" class="form-label">Product Description</label>
+        <textarea class="form-control form-control-sm" id="Description" ng-model="Description" rows="2"></textarea>
+      </div>
+      <div class="input-group p-1">
+        <div class="input-group-text">
+          <input class="form-check-input mt-0" type="checkbox" ng-model="IsStock" ng-true-value="1" ng-false-value="0" ng-checked="IsStock == 1" aria-label="Checkbox for following text input">
+        </div>
+        <input type="text" class="form-control" value="On Stock" disabled>
+      </div>
+      <div class="mt-2" align="center">
+        <button type="button" class="btn btn-sm btn-primary" ng-model="SaveBTN" ng-hide="Controls.SaveBTN.Hide" ng-click="SaveBTNClicked()">Save</button>
+        <button type="button" class="btn btn-sm btn-success" ng-model="UpdateBTN" ng-hide="Controls.UpdateBTN.Hide" ng-click="UpdateBTNClicked()">Update</button>
+      </div>
+    </form>
+    </div>
+
+    <div class="col-7 p-2">
+      <div>
+        <div class="input-group pb-3">
+          <input type="text" class="form-control form-control-sm" placeholder="Search Product" ng-model="SearchProduct" ng-keyup="SearchProductChanged()">
+        </div>
+      </div>
+      <div style="height: 71.5vh; overflow: auto;">
+        <table class="table table-sm table-striped table-bordered table-responsive" >
+          <thead style="position: sticky; top: 0; z-index: 1;">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Title</th>
+              <th scope="col">Unit Price</th>
+              <th scope="col">Stock</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-if="Products.length <= 0">
+              <td colspan="5" align="center">No Data Found</td>
+            </tr>
+            <tr ng-repeat="item in Products">
+              <th scope="row">{{$index+1}}</th>
+              <td>{{item.Title}}</td>
+              <td>{{item.UnitPrice}}</td>
+              <td>{{item.IsStock == 1 ? 'Available' : 'Not Available'}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-sm p-1" ng-class="Controls.TableShowHideBTN.Class" ng-if="Controls.ProductIndex == null || Controls.ProductIndex == $index" ng-click="ShowHideProduct($index)">{{Controls.TableShowHideBTN.Text}}</button>
+                <button type="button" class="btn btn-sm btn-danger p-1" ng-if="Controls.ProductIndex == null || Controls.ProductIndex == $index" ng-click="DeleteProduct($index, 0)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="background-color: #edf2f5;">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="deleteProductModalLabel">Delete Product Confirmation</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ng-click="DeleteProduct($index, 0)"></button>
+          </div>
+          <div class="modal-body">
+              Are you sure you want to delete this({{Controls.Delete.ProductName}}) product?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" ng-click="DeleteProduct(0, 1)">Confirm</button>
+          </div>
+      </div>
+  </div>
+</div>

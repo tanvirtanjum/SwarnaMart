@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head ng-controller="Head.Controller">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{GenerateTitle()}} | Swarna Mart</title>
+    <link rel="icon" href="./public/icon/SwarnaMart.png" type="image/x-icon"/>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./assets/css/all.css">
+
+    <!-- Angular 1.8.2 -->
+    <script src="./assets/AngularJS/angular.js"></script>
+    <!-- Angular Route 1.8.3 -->
+    <script src="./assets/AngularJS/angular-route.js"></script>
+    <script src="./assets/AngularJS/angular-cookie.js"></script>
+    <script src="./assets/AngularJS/ng-file-upload.min.js"></script>
+    <script src="./assets/AngularJS/ng-file-upload-shim.min.js"></script>
+    <!-- jQuery 3.7.0 -->
+    <script src="./assets/jQuery/jquery-3.7.0.js"></script>
+
+    <!-- Bootstrap 5.3 -->
+    <link rel="stylesheet" href="./assets/Bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="./assets/Bootstrap/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <!--  Controller  -->
+    <script src="./controllers/app.js"></script>
+    <script src="./controllers/Head.Controller.js"></script>
+    <script src="./controllers/Navigation.Controller.js"></script>
+    <script src="./controllers/Products.Controller.js"></script>
+    <script src="./controllers/ManageEmployees.Controller.js"></script>
+    <script src="./controllers/ManageCustomers.Controller.js"></script>
+    <script src="./controllers/ManageProducts.Controller.js"></script>
+    <script src="./controllers/ManageOrders.Controller.js"></script>
+    <script src="./controllers/ManageDeliveries.Controller.js"></script>
+    <script src="./controllers/ManageSales.Controller.js"></script>
+    <script src="./controllers/ManageAccounts.Controller.js"></script>
+</head>
+<body style="height: 100vh; margin: 0% 0% 0% 0%; padding: 0% 0% 0% 0%;">    
+    <header class="mb-1" ng-controller="Navigation.Controller">
+        <nav class="navbar navbar-expand-md fixed-top" style="background-color: #b1cee2;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#!">
+                    <img class="img-fluid" src="./public/icon/SwarnaMart.png" alt="" height="30px" width="30px" style="margin: 0 0 0 0; padding: 0 0 0 0;">warna Mart
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" ng-class="LinkControlls.Products.Class" aria-current="page" href="#!Products" ng-hide="LinkControlls.Products.Hide" ng-click="urlActivator()">Products</a>
+                        </li>
+                        <li class="nav-item dropdown active" ng-class="LinkControlls.Manage.Class" ng-hide="LinkControlls.Manage.Hide">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Manage
+                            </a>
+                            <ul class="dropdown-menu" style="background-color: #b1cee2;">
+                                <li><a class="dropdown-item" href="#!ManageEmployees" ng-hide="LinkControlls.ManageEmployees.Hide" ng-click="urlActivator()">Employees</a></li>
+                                <li><a class="dropdown-item" href="#!ManageCustomers" ng-hide="LinkControlls.ManageCustomers.Hide" ng-click="urlActivator()">Customers</a></li>
+                                <li><a class="dropdown-item" href="#!ManageProducts" ng-hide="LinkControlls.ManageProducts.Hide" ng-click="urlActivator()">Products</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#!ManageOrders" ng-hide="LinkControlls.ManageOrders.Hide" ng-click="urlActivator()">Orders</a></li>
+                                <li><a class="dropdown-item" href="#!ManageDeliveries" ng-hide="LinkControlls.ManageDeliveries.Hide" ng-click="urlActivator()">Deliveries</a></li>
+                                <li><a class="dropdown-item" href="#!ManageSales" ng-hide="LinkControlls.ManageSales.Hide" ng-click="urlActivator()">Sales</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#!ManageAccounts" ng-hide="LinkControlls.ManageAccounts.Hide" ng-click="urlActivator()">Accounts</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#cartModal" ng-hide="LinkControlls.Cart.Hide">
+                            Cart
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#loginModal" ng-hide="LinkControlls.SignIn.Hide">
+                            Sign In
+                        </button>
+                        <div class="btn-group dropstart me-2" ng-hide="LinkControlls.UserMenu.Hide">
+                            <button type="button" class="btn btn-outline-dark btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              {{Profile.UserName}}
+                            </button>
+                            <ul class="dropdown-menu p-0 m-0 rounded-0">
+                                <li class="p-0 m-0">
+                                    <button type="button" class="btn btn-light btn-sm border-0 rounded-0" data-bs-toggle="modal" data-bs-target="#changePasswordModal" style="width: 100%;">
+                                        Settings
+                                    </button>
+                                </li>
+                                <li class="p-0 m-0">
+                                    <button type="button" class="btn btn-light btn-sm border-0 rounded-0" ng-model="LogoutBTN" ng-click="LogoutBTNClicked()" style="width: 100%;">
+                                        Sign Out
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <br>
+        <br>
+  
+        <!-- Cart Modal -->
+        <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="background-color: #edf2f5;">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cartModalLabel">Place Order</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="background-color: #edf2f5;">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="loginModalLabel">Login</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert" ng-class="LinkControlls.SignIn.LoginMessage.Class" role="alert" ng-hide="LinkControlls.SignIn.LoginMessage.Hide" align="center">
+                            {{LinkControlls.SignIn.LoginMessage.Message}}
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control form-control-sm" id="UserName" ng-model="UserName" placeholder="XYZ">
+                            <label for="UserName">Username</label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="password" class="form-control form-control-sm" id="Password" ng-model="Password" placeholder="Password">
+                            <label for="Password">Password</label>
+                        </div>
+                        <div class="d-flex justify-content-around" style="width: 100%;" id="LoginBTN" ng-model="LoginBTN" ng-click="LoginBTNClicked()">
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 70%;">Sign In</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#signupModal">
+                            Sign Up
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Modal -->
+        <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="background-color: #edf2f5;">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="signupModalLabel">Registration</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="col-sm-6">
+                            <div style="position: fixed;  top: 40%; left: 0; width: 100%; text-align: center; z-index: 1;  padding-left: 25%; padding-right: 25%;">
+                                <div class="alert" ng-class="Controls.Alert.Class" role="alert" ng-hide="Controls.Alert.Hide">
+                                  {{Controls.Alert.Message}}
+                                </div>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control form-control-sm" id="Name" ng-model="Name" placeholder="FirstName MiddleName LastName">
+                                <label for="Name">Full Name</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <select class="form-select" id="Gender" ng-model="Gender" ng-options="item as item.Name for item in Genders track by item.Value" aria-label="Gender">
+                                    <option value="" selected>Open this select menu</option>
+                                  </select>
+                                <label for="Gender">Gender</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control form-control-sm" id="Phone" ng-model="Phone" placeholder="+8801*********">
+                                <label for="Phone">Phone No.</label>
+                            </div>
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Shipping Address" id="Address" ng-model="Address" style="height: 100px"></textarea>
+                                <label for="Address">Address</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control form-control-sm" id="RegUserName" ng-model="RegUserName" placeholder="XYZ">
+                                <label for="RegUserName">Username</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="password" class="form-control form-control-sm" id="RegPassword" ng-model="RegPassword" placeholder="Password">
+                                <label for="RegPassword">Password</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="password" class="form-control form-control-sm" id="ConfirmRegPassword" ng-model="ConfirmRegPassword" placeholder="Confirm Password">
+                                <label for="ConfirmRegPassword">Confirm Password</label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-around mt-2" style="width: 100%;" ng-click="SignupBTNClicked()">
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 70%;">Sign Up</button>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="background-color: #edf2f5;">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="changePasswordModalLabel">Settings</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="alert col-sm-12" ng-class="LinkControlls.Setting.Message.Class" role="alert" ng-hide="LinkControlls.Setting.Message.Hide" align="center">
+                            {{LinkControlls.Setting.Message.Message}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control form-control-sm" id="ProfileName" ng-model="ProfileName" placeholder="FirstName MiddleName LastName" disabled>
+                                <label for="ProfileName">Full Name</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <select class="form-select" id="ProfileGender" ng-model="ProfileGender" ng-options="item as item.Name for item in Genders track by item.Value" aria-label="Gender">
+                                  <option value="" selected>Open this select menu</option>
+                                </select>
+                                <label for="ProfileGender">Gender</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control form-control-sm" id="ProfilePhone" ng-model="ProfilePhone" placeholder="+8801*********">
+                                <label for="ProfilePhone">Phone No.</label>
+                            </div>
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Shipping Address" id="ProfileAddress" ng-model="ProfileAddress" style="height: 200px"></textarea>
+                                <label for="ProfileAddress">Address</label>
+                            </div>
+                            <div class="d-flex justify-content-around mt-2" style="width: 100%;">
+                                <button type="button" class="btn btn-sm btn-success" id="UpdateProfileBTN" ng-model="UpdateProfileBTN" ng-click="UpdateProfileBTNClicked()" style="width: 50%;">Save Changes</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control form-control-sm" id="ProfileUserName" ng-model="ProfileUserName" placeholder="XYZ">
+                                <label for="ProfileUserName">Username</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="password" class="form-control form-control-sm" id="OldPassword" ng-model="OldPassword" placeholder="Password">
+                                <label for="OldPassword">Old Password</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="password" class="form-control form-control-sm" id="NewPassword" ng-model="NewPassword" placeholder="Password">
+                                <label for="NewPassword">New Password</label>
+                            </div>
+                            <div class="form-floating mb-2">
+                                <input type="password" class="form-control form-control-sm" id="ConfirmNewPassword" ng-model="ConfirmNewPassword" placeholder="Confirm Password">
+                                <label for="ConfirmNewPassword">Confirm New Password</label>
+                            </div>
+                            <div class="d-flex justify-content-around" style="width: 100%;">
+                                <button type="button" class="btn btn-sm btn-warning" id="UpdatePasswordBTN" ng-model="UpdatePasswordBTN" ng-click="UpdatePasswordBTNClicked()" style="width: 50%;">Change Password</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading Section -->
+    <main class="container-fluid" style="height: 81.5%; overflow-y: hidden;" ng-view>
+        
+    </main>
+    <!-- Loading Section -->
+
+    <footer class="fixed-bottom justify-content-center">
+        <nav class="navbar fixed-bottom" style="background-color: #b1cee2;">
+            <div class="container-fluid">
+                <small class="navbar-text">
+                    © 2023 Swarna Mart
+                </small>
+            </div>
+        </nav>
+    </footer>
+</body>
+</html>
