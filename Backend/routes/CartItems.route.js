@@ -1,4 +1,4 @@
-const controller = require("../controllers/CartItems.Controller");
+const controller = require("../controllers/CartItems.controller");
 // const auth = require("../middleware/authenticate.middleware");
 
 var express = require("express");

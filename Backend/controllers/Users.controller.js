@@ -28,7 +28,6 @@ exports.getById = (req, res, next) => {
             console.log(error);
             return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
         } else {
-            console.log(results);
             if (results.length > 0) {
                 return res.status(200).send(results[0]);
             } else {
