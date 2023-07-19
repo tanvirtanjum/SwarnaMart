@@ -18,12 +18,17 @@ const Users = require("./routes/Users.route");
 const Products = require("./routes/Products.route");
 const Profiles = require("./routes/Profiles.route");
 const Downloads = require("./routes/Downloads.route");
+const Carts = require("./routes/Carts.route");
+const CartItems = require("./routes/CartItems.route");
+
 
 // <-- Configure Routes -->
 app.use('/api/users', Users);
 app.use('/api/products', Products);
 app.use('/api/profiles', Profiles);
 app.use('/api/downloads', Downloads);
+app.use('/api/carts', Carts);
+app.use('/api/cartitems', CartItems);
 
 // <-- -->
 app.listen(process.env.SERVER_PORT_NO, () => {

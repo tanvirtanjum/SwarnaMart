@@ -72,6 +72,9 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
         },
         Validation: {
             IsValidAdd: true
+        },
+        Cart: {
+            Message : '',
         }
     }
 
@@ -82,6 +85,8 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
         Phone: '',
         Address: ''
     };
+
+    $scope.CartItems = [];
 
     $scope.Genders = AppService.GENDER
 
@@ -97,7 +102,7 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             $scope.LinkControlls.ManageDeliveries.Hide = 0;
             $scope.LinkControlls.ManageSales.Hide = 0;
             $scope.LinkControlls.ManageAccounts.Hide = 0;
-            $scope.LinkControlls.Cart.Hide = 0;
+            $scope.LinkControlls.Cart.Hide = 1;
             $scope.LinkControlls.SignIn.Hide = 1;
             $scope.LinkControlls.UserMenu.Hide = 0;
         } else if(Data && Data.usergroups.GroupName  == 'Salesman'){
@@ -110,7 +115,7 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             $scope.LinkControlls.ManageDeliveries.Hide = 1;
             $scope.LinkControlls.ManageSales.Hide = 0;
             $scope.LinkControlls.ManageAccounts.Hide = 1;
-            $scope.LinkControlls.Cart.Hide = 0;
+            $scope.LinkControlls.Cart.Hide = 1;
             $scope.LinkControlls.SignIn.Hide = 1;
             $scope.LinkControlls.UserMenu.Hide = 0;
         } else if(Data && Data.usergroups.GroupName  == 'Deliveryman'){
@@ -123,11 +128,22 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             $scope.LinkControlls.ManageDeliveries.Hide = 0;
             $scope.LinkControlls.ManageSales.Hide = 1;
             $scope.LinkControlls.ManageAccounts.Hide = 1;
-            $scope.LinkControlls.Cart.Hide = 0;
+            $scope.LinkControlls.Cart.Hide = 1;
             $scope.LinkControlls.SignIn.Hide = 1;
             $scope.LinkControlls.UserMenu.Hide = 0;
         } else if(Data && Data.usergroups.GroupName  == 'Customer'){
-
+            $scope.LinkControlls.Products.Hide = 0;
+            $scope.LinkControlls.Manage.Hide = 0;
+            $scope.LinkControlls.ManageEmployees.Hide = 1;
+            $scope.LinkControlls.ManageCustomers.Hide = 1;
+            $scope.LinkControlls.ManageProducts.Hide = 1;
+            $scope.LinkControlls.ManageOrders.Hide = 1;
+            $scope.LinkControlls.ManageDeliveries.Hide = 0;
+            $scope.LinkControlls.ManageSales.Hide = 1;
+            $scope.LinkControlls.ManageAccounts.Hide = 1;
+            $scope.LinkControlls.Cart.Hide = 0;
+            $scope.LinkControlls.SignIn.Hide = 1;
+            $scope.LinkControlls.UserMenu.Hide = 0;
         } else{
             $scope.LinkControlls.Products.Hide = 0;
             $scope.LinkControlls.Manage.Hide = 1;
@@ -151,12 +167,16 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             $scope.Profile.Gender = Data.profiles.Gender;
             $scope.Profile.Phone = Data.profiles.Phone;
             $scope.Profile.Address = Data.profiles.Addess;
+
+            $scope.Controls.Cart.Message = Data.carts.CartCode;
         } else{
             $scope.Profile.UserName = "";
             $scope.Profile.Name = "";
             $scope.Profile.Gender = "";
             $scope.Profile.Phone = "";
             $scope.Profile.Address = "";
+
+            $scope.Controls.Cart.Message = "";
         }
 
         var GenderIndex = ($scope.Profile.Gender == "" || $scope.Profile.Gender.length <= 0) 
@@ -168,6 +188,8 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
         $scope.ProfilePhone = $scope.Profile.Phone;
         $scope.ProfileAddress = $scope.Profile.Address;
         $scope.ProfileUserName = $scope.Profile.UserName;
+
+        $scope.CartMessage = $scope.Controls.Cart.Message;
     }
 
     LinkControllSettings($cookies.getObject(AppService.COOKIE_NAME));
@@ -185,6 +207,32 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             }
             $scope.$digest();
         }, 250);
+    }
+
+    function CreateCart(){
+        var body = {
+            data : {
+                CreatedBy: $cookies.getObject(AppService.COOKIE_NAME).users.UserId,
+                CartStatus: 0
+            }
+        }
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = AppService.API_BASE_URL+'carts/post';
+
+        $http.post(url, body, config).then(function successCallback(response) {
+            if(response.status == 201){
+                ResetCookie($cookies.getObject(AppService.COOKIE_NAME).users);
+            } else{
+                alert('Error occured while creating cart');
+            }
+        }, function errorCallback(response) {
+            
+        });
     }
 
     $scope.LoginBTNClicked = function(){
@@ -214,6 +262,11 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
                     LinkControllSettings($cookies.getObject(AppService.COOKIE_NAME));
                     ProfileSettings($cookies.getObject(AppService.COOKIE_NAME));
                     $("#loginModal").modal("hide");
+                    if($cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Customer'){
+                        if($cookies.getObject(AppService.COOKIE_NAME).carts.CartId == null){
+                            CreateCart();
+                        }
+                    }
                     $scope.LinkControlls.SignIn.LoginMessage.Class = '';
                     $scope.LinkControlls.SignIn.LoginMessage.Hide = 1;
                     $scope.LinkControlls.SignIn.LoginMessage.Message = '';
@@ -276,23 +329,16 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
         var url = AppService.API_BASE_URL+'users/'+data.UserId+'/get';
 
         $http.get(url, body, config).then(function successCallback(response) {
+            console.log(response);
             if(response.status == 200){
                 $cookies.putObject(AppService.COOKIE_NAME, response.data);
+                LinkControllSettings($cookies.getObject(AppService.COOKIE_NAME));
+                ProfileSettings($cookies.getObject(AppService.COOKIE_NAME));
             } else{
-                $scope.LoginBTNClicked();
+                alert('Error occurred while resetting cookie.');
             }
         }, function errorCallback(response) {
-            $scope.Employees = [];
-            $scope.Controls.Alert.Class = 'alert-danger';
-            $scope.Controls.Alert.Hide = 0;
-            $scope.Controls.Alert.Message = 'Unable to connect to server!';
-
-            setTimeout(function(){
-                $scope.Controls.Alert.Class = '';
-                $scope.Controls.Alert.Hide = 1;
-                $scope.Controls.Alert.Message = '';
-                $scope.$digest();
-            }, 1500);
+            
         });
     }
 
@@ -608,5 +654,117 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
                 $scope.$digest();
             }, 1500);
         }
+    }
+
+    $scope.GetCartItems = function (){
+        var body = {
+            data : {}
+        }
+
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = AppService.API_BASE_URL+'cartitems/get/cartref/'+$cookies.getObject(AppService.COOKIE_NAME).carts.CartId;
+
+        $http.get(url, body, config).then(function successCallback(response) {
+            if(response.status == 200){
+                console.log("response", response.data);
+                $scope.CartItems = response.data;
+            } else{
+                $scope.CartItems = [];
+            }
+        }, function errorCallback(response) {
+            $scope.CartItems = [];
+        });
+    }
+
+    $scope.UpdateQty = function (index, qty) {
+        if($scope.CartItems[index].Quantity + qty >= 1) {
+            var body = {
+                data : {
+                    Product: $scope.CartItems[index].Product,
+                    Quantity: qty,
+                    CartRef: $scope.CartItems[index].CartRef,
+                }
+            }
+    
+            var config = [{
+                headers: {
+                  'XXX': 0
+                },     
+            }];
+    
+            var url = AppService.API_BASE_URL+'cartitems/put/'+$scope.CartItems[index].CartItemId;
+    
+            $http.put(url, body, config).then(function successCallback(response) {
+                if(response.status == 200){
+                    $scope.GetCartItems();
+                } else{
+                    alert('Error occurred while updating cart.');
+                }
+            }, function errorCallback(response) {
+                
+            });
+        } else {
+            alert("Please, remove item from cart if you don't want to buy it! 0 quantity is not allowed!");
+        }
+    }
+
+    $scope.RemoveCartItem = function (index) {
+        var body = {
+            data : {}
+        }
+
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = AppService.API_BASE_URL+'cartitems/'+$scope.CartItems[index].CartItemId+'/delete';
+
+        $http.delete(url, body, config).then(function successCallback(response) {
+            if(response.status == 204){
+                $scope.GetCartItems();
+            } else{
+                alert('Error occurred while deleting cart.');
+            }
+        }, function errorCallback(response) {
+            alert('Error occurred while deleting cart.');
+        });
+    }
+
+    $scope.PlaceOrder = function () {
+        var body = {
+            data : {
+                CartCode: $cookies.getObject(AppService.COOKIE_NAME).carts.CartCode,
+                CreatedBy: $cookies.getObject(AppService.COOKIE_NAME).carts.CreatedBy,
+                CartStatus: 1,
+            }
+        }
+
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = AppService.API_BASE_URL+'carts/put/'+$cookies.getObject(AppService.COOKIE_NAME).carts.CartId;
+
+        $http.put(url, body, config).then(function successCallback(response) {
+            if(response.status == 200){
+                alert("Order Placed Successfully!")
+                CreateCart();
+                $scope.GetCartItems();
+                $("#cartModal").modal("hide");
+            } else{
+                alert('Error occurred while updating cart.');
+            }
+        }, function errorCallback(response) {
+            
+        });
     }
 });

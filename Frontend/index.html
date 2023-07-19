@@ -7,9 +7,6 @@
     <title>{{GenerateTitle()}} | Swarna Mart</title>
     <link rel="icon" href="./public/icon/SwarnaMart.png" type="image/x-icon"/>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="./assets/css/all.css">
-
     <!-- Angular 1.8.2 -->
     <script src="./assets/AngularJS/angular.js"></script>
     <!-- Angular Route 1.8.3 -->
@@ -36,6 +33,9 @@
     <script src="./controllers/ManageDeliveries.Controller.js"></script>
     <script src="./controllers/ManageSales.Controller.js"></script>
     <script src="./controllers/ManageAccounts.Controller.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./assets/css/all.css">
 </head>
 <body style="height: 100vh; margin: 0% 0% 0% 0%; padding: 0% 0% 0% 0%;">    
     <header class="mb-1" ng-controller="Navigation.Controller">
@@ -70,7 +70,7 @@
                         </li>
                     </ul>
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#cartModal" ng-hide="LinkControlls.Cart.Hide">
+                        <button type="button" class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#cartModal" ng-click=" GetCartItems()" ng-hide="LinkControlls.Cart.Hide">
                             Cart
                         </button>
                         <button type="button" class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#loginModal" ng-hide="LinkControlls.SignIn.Hide">
@@ -102,18 +102,54 @@
   
         <!-- Cart Modal -->
         <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content" style="background-color: #edf2f5;">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="cartModalLabel">Place Order</h1>
+                        <h1 class="modal-title fs-5" id="cartModalLabel" >{{CartMessage}}</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    ...
+                        <fieldset>
+                            <legend>Shipping Details:</legend>
+                            Name: {{Profile.UserName}} <br>
+                            Phone: {{Profile.Phone}} <br>
+                            Address: {{Profile.Address}}
+                        </fieldset>
+
+                        <table class="table table-sm table-striped table-bordered table-responsive" >
+                            <thead style="position: sticky; top: 0; z-index: 1;">
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col"></th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Unit Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total Price</th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr ng-if="CartItems.length <= 0">
+                                <td colspan="7" align="center">No Data Found</td>
+                              </tr>
+                              <tr ng-repeat="item in CartItems">
+                                <th scope="row">{{$index+1}}</th>
+                                <td><img src="{{'http://localhost:3000/api/downloads?path='+item.ImagePath}}" class="card-img-top" alt="..."  style="height:50px;width:50px"></td>
+                                <td>{{item.Title}}</td>
+                                <td>{{item.UnitPrice}}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success rounded" ng-click="UpdateQty($index, -1)">-</button> {{item.Quantity}} <button class="btn btn-sm btn-danger" ng-click="UpdateQty($index, 1)">+</button>
+                                </td>
+                                <td>{{item.Quantity * item.UnitPrice}}</td>
+                                <td align="center">
+                                  <button type="button" class="btn btn-sm btn-danger p-1" ng-click="RemoveCartItem($index)">Remove</button>
+                                </td>
+                              </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-primary" ng-if="CartItems.length > 0" ng-click="PlaceOrder()">Place Order</button>
                     </div>
                 </div>
             </div>
@@ -249,7 +285,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-2">
-                                <input type="text" class="form-control form-control-sm" id="ProfileUserName" ng-model="ProfileUserName" placeholder="XYZ">
+                                <input type="text" class="form-control form-control-sm" id="ProfileUserName" ng-model="ProfileUserName" placeholder="XYZ" disabled>
                                 <label for="ProfileUserName">Username</label>
                             </div>
                             <div class="form-floating mb-2">

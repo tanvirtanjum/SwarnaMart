@@ -35,15 +35,37 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" style="background-color: #edf2f5;">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addCartModalLabel">Place Order</h1>
+                <h1 class="modal-title fs-5" id="addCartModalLabel">Add to Cart</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            ...
+              <div class="p-1" align="center">
+                <img src="{{'http://localhost:3000/api/downloads?path='+PreviewImage}}" class="card-img-top" alt="..."  style="height:100px;width:100px">
+              </div>
+              <div class="p-1" hidden>
+                <label for="ProductId" class="form-label">ProductId</label>
+                <input type="text" class="form-control form-control-sm" id="ProductId" ng-model="ProductId" placeholder="Product ID" disabled>
+              </div>
+              <div class="p-1">
+                <label for="Title" class="form-label">Title</label>
+                <input type="text" class="form-control form-control-sm" id="Title" ng-model="Title" placeholder="Product Title" disabled>
+              </div>
+              <div class="p-1">
+                <label for="UnitPrice" class="form-label">Price</label>
+                <input type="number" class="form-control form-control-sm" id="UnitPrice" ng-model="UnitPrice" placeholder="Product Price" disabled>
+              </div>
+              <div class="p-1">
+                <label for="Description" class="form-label">Product Description</label>
+                <textarea class="form-control form-control-sm" id="Description" ng-model="Description" rows="2" disabled></textarea>
+              </div>
+              <div class="p-1">
+                <label for="Quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control form-control-sm" id="Quantity" ng-model="Quantity" placeholder="Quantity">
+              </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="button" class="btn btn-primary" ng-model="AddCartBTN" ng-click="AddCartBTNClicked()">Add</button>
             </div>
         </div>
     </div>

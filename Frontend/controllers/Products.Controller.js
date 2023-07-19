@@ -62,6 +62,12 @@ app.controller('Products.Controller', function ($scope, $http, $location, $route
                 $('#loginModal').modal('show');
             }, 1500);
         } else {
+            $scope.ProductId = $scope.Products[index].ProductId;
+            $scope.PreviewImage = $scope.Products[index].ImagePath;
+            $scope.Title = $scope.Products[index].Title;
+            $scope.UnitPrice = $scope.Products[index].UnitPrice;
+            $scope.Description = $scope.Products[index].Description;
+            $scope.Quantity = 1;
             $('#addCartModal').modal('show');
         }
     }
@@ -110,5 +116,90 @@ app.controller('Products.Controller', function ($scope, $http, $location, $route
                 $scope.$digest();
             }, 1500);
         });
+    }
+
+    function addItemsToCart() {
+        var body = {
+            data : {
+                Product: $scope.ProductId,
+                Quantity: $scope.Quantity,
+                CartRef: $cookies.getObject(AppService.COOKIE_NAME).carts.CartId,
+            }
+        }
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = AppService.API_BASE_URL+'cartitems/post';
+
+        $http.post(url, body, config).then(function successCallback(response) {
+            if(response.status == 201){
+                $('#addCartModal').modal('hide');
+                alert('Added to cart successfully.');
+            } else{
+                alert('Error occurred while adding to cart.');
+            }
+        }, function errorCallback(response) {
+            
+        });
+    }
+
+    function updateItemsToCart(id) {
+        var body = {
+            data : {
+                Product: $scope.ProductId,
+                Quantity: $scope.Quantity,
+                CartRef: $cookies.getObject(AppService.COOKIE_NAME).carts.CartId,
+            }
+        }
+
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = AppService.API_BASE_URL+'cartitems/put/'+id;
+
+        $http.put(url, body, config).then(function successCallback(response) {
+            if(response.status == 200){
+                alert('Updated cart successfully.');
+                $('#addCartModal').modal('hide');
+            } else{
+                alert('Error occurred while updating cart.');
+            }
+        }, function errorCallback(response) {
+            
+        });
+    }
+
+    $scope.AddCartBTNClicked = function() {
+        if($scope.Quantity == null || $scope.Quantity == '' || $scope.Quantity <= 0) {
+            alert('Please enter valid quantity.');
+        } else {
+            var body = {
+                data : {}
+            }
+    
+            var config = [{
+                headers: {
+                  'XXX': 0
+                },     
+            }];
+    
+            var url = AppService.API_BASE_URL+'cartitems/get/product/'+$scope.ProductId+'/cartref/'+$cookies.getObject(AppService.COOKIE_NAME).carts.CartId;
+    
+            $http.get(url, body, config).then(function successCallback(response) {
+                if(response.status == 200){
+                    updateItemsToCart(response.data[0].CartItemId);
+                } else{
+                    addItemsToCart();
+                }
+            }, function errorCallback(response) {
+                
+            });
+        }
     }
 });
