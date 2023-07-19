@@ -1,7 +1,7 @@
 app.controller('ManageDeliveries.Controller', function ($scope, $http, $location, $routeParams, $rootScope, $window, $cookies, AppService) {
     $scope.Controls = {
         Div: {
-            For: $cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName,
+            Hide: $cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Customer' ? 1 : 0,
         },
         Alert: {
             Hide: 1,
@@ -10,7 +10,7 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
         },
         Validation: {
             IsValidAdd: true
-        }
+        },
     }
 
     $scope.Orders = [];
@@ -30,16 +30,21 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
             },     
         }];
 
-        var url = AppService.API_BASE_URL+'orders/get/group/exclude/5';
+        var url = '';
+        if($cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Customer') {
+            url = AppService.API_BASE_URL+'orders/get/customer/'+$cookies.getObject(AppService.COOKIE_NAME).users.UserId;
+        } else{
+            url = AppService.API_BASE_URL+'orders/get'
+        }
 
         $http.get(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
-                $scope.Employees = response.data;
+                $scope.Orders = response.data;
             } else{
-                $scope.Employees = [];
+                $scope.Orders = [];
             }
         }, function errorCallback(response) {
-            $scope.Employees = [];
+            $scope.Orders = [];
             $scope.Controls.Alert.Class = 'alert-danger';
             $scope.Controls.Alert.Hide = 0;
             $scope.Controls.Alert.Message = 'Unable to connect to server!';

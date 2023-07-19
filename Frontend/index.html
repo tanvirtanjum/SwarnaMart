@@ -111,7 +111,7 @@
                     <div class="modal-body">
                         <fieldset>
                             <legend>Shipping Details:</legend>
-                            Name: {{Profile.UserName}} <br>
+                            Name: {{Profile.Name}} <br>
                             Phone: {{Profile.Phone}} <br>
                             Address: {{Profile.Address}}
                         </fieldset>
@@ -138,7 +138,7 @@
                                 <td>{{item.Title}}</td>
                                 <td>{{item.UnitPrice}}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-success rounded" ng-click="UpdateQty($index, -1)">-</button> {{item.Quantity}} <button class="btn btn-sm btn-danger" ng-click="UpdateQty($index, 1)">+</button>
+                                    <button class="btn btn-sm btn-danger" ng-click="UpdateQty($index, -1)">-</button> {{item.Quantity}} <button class="btn btn-sm btn-primary" ng-click="UpdateQty($index, 1)">+</button>
                                 </td>
                                 <td>{{item.Quantity * item.UnitPrice}}</td>
                                 <td align="center">
