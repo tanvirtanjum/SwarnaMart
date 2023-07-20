@@ -671,7 +671,6 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
 
         $http.get(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
-                console.log("response", response.data);
                 $scope.CartItems = response.data;
             } else{
                 $scope.CartItems = [];

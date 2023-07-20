@@ -64,3 +64,26 @@ exports.getByCustomer = (data, callback) => {
         }
     );
 };
+
+exports.put = (data, callback) => {
+    var sqlString = `
+                    UPDATE      orders
+                    SET         Deliveryman = ?
+                                ,DeliveryDate = ?
+                                ,ApprovedBy = ?
+                                ,Status = ?
+                    WHERE       OrderId = ?;
+                    `;
+    var options = { sql: sqlString, nestTables: false };
+    db.query(
+        options,
+        [data.Deliveryman, data.DeliveryDate, data.ApprovedBy, data.Status, data.OrderId],
+        (error, results, fields) => {
+            if (error) {
+                return callback(error);
+            }
+            // var nestedResults = func.convertToNested(results, nestingOptions);
+            return callback(null, results);
+        }
+    );
+};

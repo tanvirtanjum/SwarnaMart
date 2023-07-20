@@ -36,3 +36,22 @@ exports.getByCustomer = (req, res, next) => {
         }
     });
 };
+
+exports.put = (req, res, next) => {
+    const data = {
+        OrderId : req.params.id,
+        Deliveryman : req.body.data.Deliveryman,
+        DeliveryDate: req.body.data.DeliveryDate,
+        ApprovedBy: req.body.data.ApprovedBy,
+        Status: req.body.data.Status,
+    };
+
+    service.put(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            return res.status(200).send(results);
+        }
+    });
+};
