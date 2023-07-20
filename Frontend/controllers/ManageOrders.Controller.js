@@ -20,7 +20,9 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
     if($cookies.get(AppService.COOKIE_NAME) == null || $cookies.get(AppService.COOKIE_NAME) == undefined) {
         $location.url('/');
     } else {
-        if($cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName != 'Admin') {
+        if($cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName != 'Admin' || $cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName != 'Salesman') {
+            
+        } else {
             $location.url('/');
         }
     }
@@ -113,7 +115,6 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
             },     
         }];
 
-        console.log("body", body);
         var url = AppService.API_BASE_URL+'orders/put/'+$scope.CancelOrderId;
 
         $http.put(url, body, config).then(function successCallback(response) {
@@ -121,7 +122,6 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
                 $scope.CancelOrderId = 0;
                 GetOrders(); 
                 $('#cancelOrderModal').modal('hide');                
-                $scope.$digest();
             } else{
                 
             }
@@ -156,6 +156,7 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
     }
 
     $scope.ShowOrder = function(index) {
+        $scope.OrderOrderId = $scope.Orders[index].OrderId;
         $scope.OrderCode = $scope.Orders[index].CartCode;
         $scope.OrderName = $scope.Orders[index].Name;
         $scope.OrderDate = $scope.Orders[index].OrderDate;
@@ -163,7 +164,49 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
         $scope.OrderAddress = $scope.Orders[index].Addess;
         $scope.OrderStatus = $scope.Orders[index].Status;
         $scope.OrderTotalPayable = $scope.Orders[index].TotalPayable;
+        var DeliveryManIndex = (!$scope.Orders[index].Deliveryman || $scope.Orders[index].Deliveryman.length <= 0) 
+                            ? -1
+                            : $scope.DeliveryByList.findIndex(x => x.Value ==  $scope.Orders[index].Deliveryman);
+        $scope.DeliveryBy = $scope.DeliveryByList[DeliveryManIndex];
         
         getCartItems($scope.Orders[index].Cart);
+    }
+
+    $scope.AssignDeliveryman = function() {
+        if($scope.DeliveryBy != undefined || $scope.DeliveryBy != null) {
+            var body = {
+                data : {
+                    Deliveryman : $scope.DeliveryBy.Value,
+                    DeliveryDate: 0,
+                    ApprovedBy: $cookies.getObject(AppService.COOKIE_NAME).users.UserId,
+                    Status: 1,
+                }
+            }
+    
+            var config = [{
+                headers: {
+                  'XXX': 0
+                },     
+            }];
+
+            console.log("body", body);
+    
+            var url = AppService.API_BASE_URL+'orders/put/'+$scope.OrderOrderId;
+    
+            $http.put(url, body, config).then(function successCallback(response) {
+                if(response.status == 200){
+                    $scope.OrderOrderId = 0;
+                    GetOrders(); 
+                    $('#orderDetailsModal').modal('hide');                
+                    // $scope.$digest();
+                } else{
+                    alert("Unable to assign deliveryman!");
+                }
+            }, function errorCallback(response) {
+                
+            });
+        } else {
+            alert("Please select deliveryman!", $scope.DeliveryBy);
+        }
     }
 }); 

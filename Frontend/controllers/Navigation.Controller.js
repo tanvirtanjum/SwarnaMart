@@ -100,7 +100,7 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             $scope.LinkControlls.ManageProducts.Hide = 0;
             $scope.LinkControlls.ManageOrders.Hide = 0;
             $scope.LinkControlls.ManageDeliveries.Hide = 0;
-            $scope.LinkControlls.ManageSales.Hide = 0;
+            $scope.LinkControlls.ManageSales.Hide = 1;
             $scope.LinkControlls.ManageAccounts.Hide = 0;
             $scope.LinkControlls.Cart.Hide = 1;
             $scope.LinkControlls.SignIn.Hide = 1;
@@ -113,7 +113,7 @@ app.controller('Navigation.Controller', function ($scope, $http, $location, $rou
             $scope.LinkControlls.ManageProducts.Hide = 1;
             $scope.LinkControlls.ManageOrders.Hide = 0;
             $scope.LinkControlls.ManageDeliveries.Hide = 1;
-            $scope.LinkControlls.ManageSales.Hide = 0;
+            $scope.LinkControlls.ManageSales.Hide = 1;
             $scope.LinkControlls.ManageAccounts.Hide = 1;
             $scope.LinkControlls.Cart.Hide = 1;
             $scope.LinkControlls.SignIn.Hide = 1;
