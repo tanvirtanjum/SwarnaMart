@@ -1,3 +1,130 @@
-<div>
-    {{title}}
-</div>
+<div style="position: fixed;  top: 40%; left: 0; width: 100%; text-align: center; z-index: 1;  padding-left: 25%; padding-right: 25%;">
+    <div class="alert" ng-class="Controls.Alert.Class" role="alert" ng-hide="Controls.Alert.Hide">
+      {{Controls.Alert.Message}}
+    </div>
+  </div>
+  
+  <div class="row" style="min-height: 100%; max-height: 100%;">
+      <div class="col-12 p-2 bg-body-tertiary" style="height: 81.5vh; overflow: auto; margin-bottom: 100px;">
+        <div ng-hide="Controls.Div.Hide">
+          <div class="input-group pb-3">
+            <input type="text" class="form-control form-control-sm" placeholder="Search Customer" ng-model="SearchEmployee" ng-keyup="SearchEmployeeChanged()">
+          </div>
+        </div>
+        <div style="height: 71.5vh; overflow: auto;">
+          <table class="table table-sm table-striped table-bordered table-responsive" >
+            <thead style="position: sticky; top: 0; z-index: 1;">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Invoice No</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Payable</th>
+                <th scope="col">Order Date</th>
+                <th scope="col">Delivery Date</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-if="Orders.length <= 0">
+                <td colspan="8" align="center">No Data Found</td>
+              </tr>
+              <tr ng-repeat="item in Orders">
+                <th scope="row">{{$index+1}}</th>
+                <td>{{item.CartCode}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.TotalPayable}}</td>
+                <td>{{item.OrderDate.split('T')[0]}}</td>
+                <td>{{item.Status == 3 ? item.DeliveryDate : ''}}</td>
+                <td>{{item.Status == 0 ? 'Pending' : item.Status == 1 ? 'On Delivery' : item.Status == 2 ? 'Delivered' : item.Status == -1 ? 'Cancelled' : '' }}</td>
+                <td align="center">
+                    <button type="button" class="btn btn-sm btn-success p-1" ng-if="item.Status == 0 || item.Status == 1" ng-click="ShowOrder($index)">{{item.Status == 0 ? 'Approve' : 'Update'}}</button>
+                    <button type="button" class="btn btn-sm btn-danger p-1"  ng-if="item.Status == 0 || item.Status == 1" ng-click="CancelOrderRequest($index)">Cancel</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+
+  <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: #edf2f5;">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="cancelOrderModalLabel">Cancel Order Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ng-click="DeleteEmployee($index, 0)"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" ng-model="CancelOrderId" />
+                Are you sure you want to cancel this order?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="CancelOrder()">Confirm</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  <!-- Cart Modal -->
+  <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: #edf2f5;">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="orderDetailsModalLabel" >{{OrderCode}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <fieldset>
+                    <legend>Shipping Details:</legend>
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-8">
+                              Name: {{OrderName}}  <br>                 
+                              Phone: {{OrderPhone}} <br>
+                              Address: {{OrderAddress}} <br>   
+                              Deliver By: 
+                              <select id="DeliveryBy" ng-model="DeliveryBy" ng-options="item as item.Name for item in DeliveryByList track by item.Value" aria-label="DeliveryBy">
+                              </select>               
+                            </div>
+                            <div class="col-4">
+                              Status: {{OrderStatus == 0 ? 'Pending' : OrderStatus == 1 ? 'On Delivery' : OrderStatus == 3 ? 'Delivered' : OrderStatus == -1 ? 'Cancelled' : '' }} <br>
+                              Order Date: {{OrderDate.split('T')[0]}} <br>
+                              Total Payable: {{OrderTotalPayable}} <br>
+                            </div>
+                          </div>
+                        </div>
+                </fieldset>
+
+                <table class="table table-sm table-striped table-bordered table-responsive" >
+                    <thead style="position: sticky; top: 0; z-index: 1;">
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"></th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Unit Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-if="OrderCartItems.length <= 0">
+                        <td colspan="6" align="center">No Data Found</td>
+                      </tr>
+                      <tr ng-repeat="item in OrderCartItems">
+                        <th scope="row">{{$index+1}}</th>
+                        <td><img src="{{'http://localhost:3000/api/downloads?path='+item.ImagePath}}" class="card-img-top" alt="..."  style="height:50px;width:50px"></td>
+                        <td>{{item.Title}}</td>
+                        <td>{{item.UnitPrice}}</td>
+                        <td>{{item.Quantity}}</td>
+                        <td>{{item.Quantity * item.UnitPrice}}</td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-if="CartItems.length > 0" ng-click="PlaceOrder()">Place Order</button>
+            </div> -->
+        </div>
+    </div>
+  </div>

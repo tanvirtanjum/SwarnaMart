@@ -8,6 +8,7 @@ var router = express.Router();
 router.get("/get", controller.get);
 router.get("/:id/get", controller.getById);
 router.get("/get/LoginAccess/:id", controller.getByLoginAccess);
+router.get("/get/role/:id", controller.getByRole);
 router.post("/login", controller.postLogin);
 //router.post("/login", controller.getLogin);
 

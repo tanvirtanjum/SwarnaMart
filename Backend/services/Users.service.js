@@ -50,6 +50,35 @@ exports.getById = (data, callback) => {
     );
 };
 
+exports.getByRole = (data, callback) => {
+    var sqlString = `
+                    SELECT      users.* 
+                                ,usergroups.GroupName
+                                ,profiles.Name
+                    FROM        users
+                    LEFT JOIN   usergroups
+                                ON users.GroupId = usergroups.GroupId
+                    LEFT JOIN   profiles
+                                ON users.UserId = profiles.User
+                    LEFT JOIN   carts
+                                ON users.UserId = carts.CreatedBy
+                                AND carts.CartStatus = 0
+                    WHERE       users.GroupId = ?
+                    `;
+    var options = { sql: sqlString, nestTables: false };
+    db.query(
+        options,
+        [data.GroupId],
+        (error, results, fields) => {
+            if (error) {
+                return callback(error);
+            }
+            // var nestedResults = func.convertToNested(results, nestingOptions);
+            return callback(null, results);
+        }
+    );
+};
+
 exports.getByLoginAccess = (data, callback) => {
     var sqlString = `
                     SELECT      * 
