@@ -65,6 +65,39 @@ exports.getByCustomer = (data, callback) => {
     );
 };
 
+exports.getByDeliveryman = (data, callback) => {
+    var sqlString = `
+                    SELECT      *
+                                ,(
+                                    SELECT  SUM(cartitems.Quantity*products.UnitPrice)
+                                    FROM    cartitems
+                                    LEFT JOIN   products
+                                                ON products.ProductId = cartitems.Product
+                                    WHERE   cartitems.CartRef = orders.Cart
+                                ) AS TotalPayable
+                    FROM        orders
+                    LEFT JOIN   users
+                                ON users.UserId = orders.Customer
+                    LEFT JOIN   profiles
+                                ON profiles.user = orders.Customer
+                    LEFT JOIN   carts
+                                ON carts.CartId = orders.Cart
+                    WHERE       orders.Deliveryman = ?
+                    `;
+    var options = { sql: sqlString, nestTables: false };
+    db.query(
+        options,
+        [data.Deliveryman],
+        (error, results, fields) => {
+            if (error) {
+                return callback(error);
+            }
+            // var nestedResults = func.convertToNested(results, nestingOptions);
+            return callback(null, results);
+        }
+    );
+};
+
 exports.put = (data, callback) => {
     var sqlString = `
                     UPDATE      orders

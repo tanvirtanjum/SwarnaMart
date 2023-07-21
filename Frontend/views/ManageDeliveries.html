@@ -35,8 +35,8 @@
                 <td>{{item.Name}}</td>
                 <td>{{item.TotalPayable}}</td>
                 <td>{{item.OrderDate.split('T')[0]}}</td>
-                <td>{{item.Status == 2 ? item.DeliveryDate : ''}}</td>
-                <td>{{item.Status == 0 ? 'Pending' : item.Status == 1 ? 'On Delivery' : item.Status == 2 ? 'Delivered' : item.Status == -1 ? 'Cancelled' : '' }}</td>
+                <td>{{item.Status == 2 ? item.DeliveryDate.split('T')[0] : ''}}</td>
+                <td>{{item.Status == 0 ? 'Pending' : item.Status == 1 ? 'On Delivery' : item.Status == 2 ? 'Delivered' : item.Status == -1 && item.Deliveryman <= 0  ? 'Cancelled' : 'Returned' }}</td>
                 <td align="center">
                     <button type="button" class="btn btn-sm btn-success p-1" ng-click="ShowOrder($index)">Details</button>
                     <button type="button" class="btn btn-sm btn-danger p-1" ng-if="item.Status == 0" ng-click="CancelOrderRequest($index)">Cancel</button>
@@ -82,12 +82,16 @@
                             <div class="col-8">
                               Name: {{OrderName}}  <br>                 
                               Phone: {{OrderPhone}} <br>
-                              Address: {{OrderAddress}} <br>                    
+                              Address: {{OrderAddress}} <br>  
+                              <span ng-hide="OrderStatus != 2">Deliver By:</span> 
+                              <select id="DeliveryBy" ng-disabled="1" ng-hide="OrderStatus != 2" ng-model="DeliveryBy" ng-options="item as item.Name for item in DeliveryByList track by item.Value" aria-label="DeliveryBy">
+                              </select>                     
                             </div>
                             <div class="col-4">
-                              Status: {{OrderStatus == 0 ? 'Pending' : OrderStatus == 1 ? 'On Delivery' : OrderStatus == 2 ? 'Delivered' : OrderStatus == -1 ? 'Cancelled' : '' }} <br>
-                              Order Date: {{OrderDate.split('T')[0]}} <br>
+                              Status: {{OrderStatus == 0 ? 'Pending' : OrderStatus == 1 ? 'On Delivery' : OrderStatus == 2 ? 'Delivered' : OrderStatus == -1 && DeliveryBy.Value <= 0 ? 'Cancelled' : 'Returned' }} <br>
+                              Order Date: {{OrderDate.split('T')[0]}} <br>                
                               Total Payable: {{OrderTotalPayable}} <br>
+                              <span ng-if="OrderStatus == 2">Delivery Date: {{OrderDeliveryDate.split('T')[0]}}</span>
                             </div>
                           </div>
                         </div>
@@ -119,9 +123,10 @@
                     </tbody>
                 </table>
             </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-primary" ng-if="CartItems.length > 0" ng-click="PlaceOrder()">Place Order</button>
-            </div> -->
+            <div class="modal-footer" ng-hide="Controls.Div.Hide">
+                <button type="button" class="btn btn-sm btn-success" ng-disabled="OrderCartItems.length == 0 || OrderStatus != 1" ng-click="DeliverOrder(2)">Receive</button>
+                <button type="button" class="btn btn-sm btn-danger" ng-disabled="OrderCartItems.length == 0 || OrderStatus != 1" ng-click="DeliverOrder(-1)">Return</button>
+            </div>
         </div>
     </div>
   </div>

@@ -37,11 +37,32 @@ exports.getByCustomer = (req, res, next) => {
     });
 };
 
+exports.getByDeliveryman = (req, res, next) => {
+    const data = {
+        Deliveryman : req.params.id,
+    };
+
+    service.getByDeliveryman(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            if (results.length > 0) {
+                return res.status(200).send(results);
+            } else {
+                return res.status(204).send({ success: false, data: "No Data Found." });
+            }
+        }
+    });
+};
+
 exports.put = (req, res, next) => {
+    var datetime = new Date();
+
     const data = {
         OrderId : req.params.id,
         Deliveryman : req.body.data.Deliveryman,
-        DeliveryDate: req.body.data.DeliveryDate,
+        DeliveryDate: req.body.data.Status != 2 ? req.body.data.DeliveryDate : datetime,
         ApprovedBy: req.body.data.ApprovedBy,
         Status: req.body.data.Status,
     };

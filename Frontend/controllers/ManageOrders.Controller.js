@@ -164,6 +164,7 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
         $scope.OrderAddress = $scope.Orders[index].Addess;
         $scope.OrderStatus = $scope.Orders[index].Status;
         $scope.OrderTotalPayable = $scope.Orders[index].TotalPayable;
+        $scope.OrderDeliveryDate = $scope.Orders[index].DeliveryDate;
         var DeliveryManIndex = (!$scope.Orders[index].Deliveryman || $scope.Orders[index].Deliveryman.length <= 0) 
                             ? -1
                             : $scope.DeliveryByList.findIndex(x => x.Value ==  $scope.Orders[index].Deliveryman);
