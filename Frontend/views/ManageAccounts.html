@@ -1,3 +1,92 @@
-<div>
-    {{title}}
+<div style="position: fixed;  top: 40%; left: 0; width: 100%; text-align: center; z-index: 1;  padding-left: 25%; padding-right: 25%;">
+  <div class="alert" ng-class="Controls.Alert.Class" role="alert" ng-hide="Controls.Alert.Hide">
+    {{Controls.Alert.Message}}
+  </div>
+</div>
+
+<div class="pt-3" style="height: 81.5vh; overflow: auto; margin-bottom: 100px;">
+    <div align="right" style="width: 100%;">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-6" align="left">
+            <h5>Total Sale: {{Total}} BDT</h5>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <div class="col-2">Filter</div>
+              <div class="col-6">
+                <select class="form-select form-select-sm" style="width: 100%;" aria-label="Default select example" ng-model="filterChoose" ng-change="filterOption()">
+                  <option value="0" selected>All</option>
+                  <option value="1">Order Date</option>
+                  <option value="2">Delivery Date</option>
+                </select>
+              </div>
+              <div class="col-4" ng-hide="Controls.Div.Hide">
+                <input type="month" class="form-control" id="MonthYear" name="MonthYear" ng-model="MonthYear" ng-change="filterList()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion accordion-flush" id="accordionSale">
+        <div class="accordion-item bg-info-subtle" ng-repeat="item in Orders">
+          <h4 class="accordion-header">
+            <button class="accordion-button collapsed bg-primary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{item.CartCode}}" aria-expanded="false" aria-controls="flush--{{item.CartCode}}" ng-click="ShowOrder($index)">
+              {{item.CartCode + ' | Paid: ' + item.TotalPayable + 'BDT | Customer: ' + item.Name + ' | Order Date: ' + item.OrderDate.split('T')[0] + ' | Delivery Date: ' + item.DeliveryDate.split('T')[0] }}
+            </button>
+          </h4>
+          <div id="flush-{{item.CartCode}}" class="accordion-collapse collapse" data-bs-parent="#accordionSale">
+            <div class="accordion-body">
+              <fieldset>
+                <legend>Shipping Details:</legend>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-8">
+                          Name: {{OrderName}}  <br>                 
+                          Phone: {{OrderPhone}} <br>
+                          Address: {{OrderAddress}} <br>  
+                          <span ng-hide="OrderStatus != 2">Deliver By:</span> 
+                          <select id="DeliveryBy" ng-disabled="1" ng-hide="OrderStatus != 2" ng-model="DeliveryBy" ng-options="item as item.Name for item in DeliveryByList track by item.Value" aria-label="DeliveryBy">
+                          </select>                     
+                        </div>
+                        <div class="col-4">
+                          Status: {{OrderStatus == 0 ? 'Pending' : OrderStatus == 1 ? 'On Delivery' : OrderStatus == 2 ? 'Delivered' : OrderStatus == -1 && DeliveryBy.Value <= 0 ? 'Cancelled' : 'Returned' }} <br>
+                          Order Date: {{OrderDate.split('T')[0]}} <br>                
+                          Total Payable: {{OrderTotalPayable}} <br>
+                          <span ng-if="OrderStatus == 2">Delivery Date: {{OrderDeliveryDate.split('T')[0]}}</span>
+                        </div>
+                      </div>
+                    </div>
+            </fieldset>
+
+            <table class="table table-sm table-striped table-bordered table-responsive" >
+                <thead style="position: sticky; top: 0; z-index: 1;">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col"></th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-if="OrderCartItems.length <= 0">
+                    <td colspan="6" align="center">No Data Found</td>
+                  </tr>
+                  <tr ng-repeat="item in OrderCartItems">
+                    <th scope="row">{{$index+1}}</th>
+                    <td><img src="{{'http://localhost:3000/api/downloads?path='+item.ImagePath}}" class="card-img-top" alt="..."  style="height:50px;width:50px"></td>
+                    <td>{{item.Title}}</td>
+                    <td>{{item.UnitPrice}}</td>
+                    <td>{{item.Quantity}}</td>
+                    <td>{{item.Quantity * item.UnitPrice}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    </div>
 </div>

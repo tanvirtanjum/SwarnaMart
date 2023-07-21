@@ -74,7 +74,7 @@
                 <td>{{item.Phone}}</td>
                 <td>{{item.LoginAccess == 1 ? 'Active' : 'Blocked'}}</td>
                 <td align="center">
-                  <button type="button" class="btn btn-sm p-1" ng-class="Controls.TableShowHideBTN.Class" ng-if="Controls.EmployeeIndex == null || Controls.EmployeeIndex == $index" ng-click="ShowHideCustomer($index)">{{Controls.TableShowHideBTN.Text}}</button>
+                  <button type="button" class="btn btn-sm p-1" ng-class="Controls.TableShowHideBTN.Class" ng-if="Controls.CustomerIndex == null || Controls.CustomerIndex == $index" ng-click="ShowHideCustomer($index)">{{Controls.TableShowHideBTN.Text}}</button>
                 </td>
               </tr>
             </tbody>

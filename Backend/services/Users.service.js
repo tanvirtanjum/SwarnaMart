@@ -103,6 +103,30 @@ exports.getByLoginAccess = (data, callback) => {
     );
 };
 
+exports.getByUserName = (data, callback) => {
+    var sqlString = `
+                    SELECT      * 
+                    FROM        users
+                    LEFT JOIN   usergroups
+                                ON users.GroupId = usergroups.GroupId
+                    LEFT JOIN   profiles
+                                ON users.UserId = profiles.User
+                    WHERE       users.UserName = ?
+                    `;
+    var options = { sql: sqlString, nestTables: true };
+    db.query(
+        options,
+        [data.UserName],
+        (error, results, fields) => {
+            if (error) {
+                return callback(error);
+            }
+            // var nestedResults = func.convertToNested(results, nestingOptions);
+            return callback(null, results);
+        }
+    );
+};
+
 exports.postLogin = (data, callback) => {
     var sqlString = `
                     SELECT      * 

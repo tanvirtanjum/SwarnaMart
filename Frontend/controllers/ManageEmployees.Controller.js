@@ -118,56 +118,100 @@ app.controller('ManageEmployees.Controller', function ($scope, $http, $location,
         return $scope.Controls.Validation.IsValidAdd;
     }
 
+    function addProfile() {
+        var body = {
+            data : {
+                Name: $scope.Name,
+                Gender: $scope.Gender,
+                Phone: $scope.Phone,
+                Address: $scope.Address,
+                UserName: $scope.RegUserName,
+                Password: $scope.RegPassword,
+                GroupId: $scope.GroupId,
+                LoginAccess: $scope.LoginAccess,
+            }
+        }
+
+        var config = [{
+            headers: {
+                "XXX": ""
+            }  
+        }];
+
+        var url = AppService.API_BASE_URL+'profiles/post';
+
+        $http.post(url, body, config).then(function successCallback(response) {
+            if(response.status == 201){
+                $scope.Controls.Alert.Class = 'alert-success';
+                $scope.Controls.Alert.Hide = 0;
+                $scope.Controls.Alert.Message = 'Employee Added Successfully!';
+                
+                setTimeout(function(){
+                    $scope.Controls.Alert.Class = '';
+                    $scope.Controls.Alert.Hide = 1;
+                    $scope.Controls.Alert.Message = '';
+                    GetEmployees();
+                    $scope.ShowHideEmployee(null);
+                    $scope.$digest();
+                }, 1500);
+            } else{
+                $scope.Controls.Alert.Class = 'alert-warning';
+                $scope.Controls.Alert.Hide = 0;
+                $scope.Controls.Alert.Message = 'Something Went Wrong!';
+
+                setTimeout(function(){
+                    $scope.Controls.Alert.Class = '';
+                    $scope.Controls.Alert.Hide = 1;
+                    $scope.Controls.Alert.Message = '';
+                    $scope.ShowHideEmployee(null);
+                    $scope.$digest();
+                }, 1500);
+            }
+        }, function errorCallback(response) {
+            $scope.Controls.Alert.Class = 'alert-danger';
+            $scope.Controls.Alert.Hide = 0;
+            $scope.Controls.Alert.Message = 'Unable to connect to server!';
+
+            setTimeout(function(){
+                $scope.Controls.Alert.Class = '';
+                $scope.Controls.Alert.Hide = 1;
+                $scope.Controls.Alert.Message = '';
+                $scope.ShowHideEmployee(null);
+                $scope.$digest();
+            }, 1500);
+        });
+    }
+
     $scope.SaveBTNClicked = function () {
         if(Validate()) {
             var body = {
-                data : {
-                    Name: $scope.Name,
-                    Gender: $scope.Gender,
-                    Phone: $scope.Phone,
-                    Address: $scope.Address,
-                    UserName: $scope.RegUserName,
-                    Password: $scope.RegPassword,
-                    GroupId: $scope.GroupId,
-                    LoginAccess: $scope.LoginAccess,
-                }
+                data : {}
             }
- 
+    
             var config = [{
                 headers: {
-                    "XXX": ""
-                }  
+                  'XXX': 0
+                },     
             }];
     
-            var url = AppService.API_BASE_URL+'profiles/post';
-
-            $http.post(url, body, config).then(function successCallback(response) {
-                if(response.status == 201){
-                    $scope.Controls.Alert.Class = 'alert-success';
-                    $scope.Controls.Alert.Hide = 0;
-                    $scope.Controls.Alert.Message = 'Employee Added Successfully!';
-                    
-                    setTimeout(function(){
-                        $scope.Controls.Alert.Class = '';
-                        $scope.Controls.Alert.Hide = 1;
-                        $scope.Controls.Alert.Message = '';
-                        GetEmployees();
-                        $scope.ShowHideEmployee(null);
-                        $scope.$digest();
-                    }, 1500);
-                } else{
+            var url = AppService.API_BASE_URL+'users/get/username/'+$scope.RegUserName;
+    
+            $http.get(url, body, config).then(function successCallback(response) {
+                if(response.status == 200){
                     $scope.Controls.Alert.Class = 'alert-warning';
                     $scope.Controls.Alert.Hide = 0;
-                    $scope.Controls.Alert.Message = 'Something Went Wrong!';
-    
+                    $scope.Controls.Alert.Message = 'User Name Exists!';
+                    $scope.RegUserName = '';
+        
                     setTimeout(function(){
                         $scope.Controls.Alert.Class = '';
                         $scope.Controls.Alert.Hide = 1;
                         $scope.Controls.Alert.Message = '';
-                        $scope.ShowHideEmployee(null);
                         $scope.$digest();
                     }, 1500);
-                }
+                } else if(response.status == 204){
+                    addProfile();
+                } else{}
             }, function errorCallback(response) {
                 $scope.Controls.Alert.Class = 'alert-danger';
                 $scope.Controls.Alert.Hide = 0;
@@ -181,6 +225,7 @@ app.controller('ManageEmployees.Controller', function ($scope, $http, $location,
                     $scope.$digest();
                 }, 1500);
             });
+
         } else {
             $scope.Controls.Alert.Class = 'alert-warning';
             $scope.Controls.Alert.Hide = 0;

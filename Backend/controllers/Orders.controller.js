@@ -56,6 +56,107 @@ exports.getByDeliveryman = (req, res, next) => {
     });
 };
 
+exports.getByStatus = (req, res, next) => {
+    const data = {
+        Status : req.params.id,
+    };
+
+    service.getByStatus(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            if (results.length > 0) {
+                return res.status(200).send(results);
+            } else {
+                return res.status(204).send({ success: false, data: "No Data Found." });
+            }
+        }
+    });
+};
+
+exports.getByStatusCustomer = (req, res, next) => {
+    const data = {
+        Status : req.params.id,
+        Customer : req.params.cus,
+    };
+
+    service.getByStatusCustomer(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            if (results.length > 0) {
+                return res.status(200).send(results);
+            } else {
+                return res.status(204).send({ success: false, data: "No Data Found." });
+            }
+        }
+    });
+};
+
+exports.getByStatusDeliveryman = (req, res, next) => {
+    const data = {
+        Status : req.params.id,
+        Deliveryman : req.params.del,
+    };
+
+    service.getByStatusDeliveryman(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            if (results.length > 0) {
+                return res.status(200).send(results);
+            } else {
+                return res.status(204).send({ success: false, data: "No Data Found." });
+            }
+        }
+    });
+};
+
+exports.getByStatusOrderMonthYear = (req, res, next) => {
+    const data = {
+        Status : req.params.id,
+        Month : req.params.mm,
+        Year : req.params.yyyy,
+    };
+
+    service.getByStatusOrderMonthYear(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            if (results.length > 0) {
+                return res.status(200).send(results);
+            } else {
+                return res.status(204).send({ success: false, data: "No Data Found." });
+            }
+        }
+    });
+};
+
+exports.getByStatusDeliveryMonthYear = (req, res, next) => {
+    const data = {
+        Status : req.params.id,
+        Month : req.params.mm,
+        Year : req.params.yyyy,
+    };
+
+    service.getByStatusDeliveryMonthYear(data, (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(400).send({ success: false, data: "Bad Request. {{--> "+error+" <--}}" });
+        } else {
+            if (results.length > 0) {
+                return res.status(200).send(results);
+            } else {
+                return res.status(204).send({ success: false, data: "No Data Found." });
+            }
+        }
+    });
+};
+
 exports.put = (req, res, next) => {
     var datetime = new Date();
 

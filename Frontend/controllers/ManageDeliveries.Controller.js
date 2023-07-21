@@ -1,7 +1,7 @@
 app.controller('ManageDeliveries.Controller', function ($scope, $http, $location, $routeParams, $rootScope, $window, $cookies, AppService) {
     $scope.Controls = {
         Div: {
-            Hide: $cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Customer' ? 1 : 0,
+            Hide: $cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Customer' ? 0 : 0,
         },
         Alert: {
             Hide: 1,
@@ -11,6 +11,9 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
         Validation: {
             IsValidAdd: true
         },
+        DropDown: {
+            Hide: $cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Deliveryman' ? 1 : 0,
+        }
     }
 
     $scope.Orders = [];
@@ -69,6 +72,7 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
         } else {
             url = AppService.API_BASE_URL+'orders/get/deliveryman/'+$cookies.getObject(AppService.COOKIE_NAME).users.UserId;
         }
+        $scope.filters = 4;
 
         $http.get(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
@@ -121,7 +125,8 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
         $http.put(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
                 $scope.CancelOrderId = 0;
-                GetOrders(); 
+                // GetOrders(); 
+                $scope.filterList();
                 $('#cancelOrderModal').modal('hide');                
                 $scope.$digest();
             } else{
@@ -197,7 +202,8 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
         $http.put(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
                 $scope.OrderOrderId = 0;
-                GetOrders(); 
+                // GetOrders(); 
+                $scope.filterList();
                 $('#orderDetailsModal').modal('hide');                
                 // $scope.$digest();
             } else{
@@ -206,5 +212,56 @@ app.controller('ManageDeliveries.Controller', function ($scope, $http, $location
         }, function errorCallback(response) {
             
         });
+    }
+
+    function filterOrders(api) {
+        var body = {
+            data : {}
+        }
+
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = '';
+        url = api;
+
+        $http.get(url, body, config).then(function successCallback(response) {
+            if(response.status == 200){
+                $scope.Orders = response.data;
+            } else{
+                $scope.Orders = [];
+            }
+        }, function errorCallback(response) {
+            $scope.Orders = [];
+            $scope.Controls.Alert.Class = 'alert-danger';
+            $scope.Controls.Alert.Hide = 0;
+            $scope.Controls.Alert.Message = 'Unable to connect to server!';
+
+            setTimeout(function(){
+                $scope.Controls.Alert.Class = '';
+                $scope.Controls.Alert.Hide = 1;
+                $scope.Controls.Alert.Message = '';
+                $scope.$digest();
+            }, 1500);
+        });
+    }
+
+    $scope.filterList = function() {
+        console.log("filterList", $scope.filter);
+        if(!$scope.filter || $scope.filter == 4) {
+            GetOrders();
+        } else {
+            if($cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Customer') {
+                api = AppService.API_BASE_URL+'orders/get/status/'+$scope.filter+'/customer/'+$cookies.getObject(AppService.COOKIE_NAME).users.UserId;
+            } else if($cookies.getObject(AppService.COOKIE_NAME).usergroups.GroupName == 'Admin') {
+                api = AppService.API_BASE_URL+'orders/get/status/'+$scope.filter;
+            } else {
+                api = AppService.API_BASE_URL+'orders/get/status/'+$scope.filter+'/deliveryman/'+$cookies.getObject(AppService.COOKIE_NAME).users.UserId;
+            }
+            filterOrders(api);
+        }
     }
 }); 

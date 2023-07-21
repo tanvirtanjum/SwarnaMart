@@ -13,6 +13,7 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
         },
     }
 
+    $scope.filter = 4;
     $scope.Orders = [];
     $scope.DeliveryByList = [];
     $scope.OrderCartItems = [];
@@ -68,7 +69,7 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
         }];
 
         var url = '';
-        url = AppService.API_BASE_URL+'orders/get'
+        url = AppService.API_BASE_URL+'orders/get';
 
         $http.get(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
@@ -120,7 +121,8 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
         $http.put(url, body, config).then(function successCallback(response) {
             if(response.status == 200){
                 $scope.CancelOrderId = 0;
-                GetOrders(); 
+                // GetOrders(); 
+                $scope.filterList(); 
                 $('#cancelOrderModal').modal('hide');                
             } else{
                 
@@ -197,7 +199,9 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
             $http.put(url, body, config).then(function successCallback(response) {
                 if(response.status == 200){
                     $scope.OrderOrderId = 0;
-                    GetOrders(); 
+                    // GetOrders(); 
+                    $scope.filterList();
+                    $scope.filters = 4;
                     $('#orderDetailsModal').modal('hide');                
                     // $scope.$digest();
                 } else{
@@ -209,5 +213,51 @@ app.controller('ManageOrders.Controller', function ($scope, $http, $location, $r
         } else {
             alert("Please select deliveryman!", $scope.DeliveryBy);
         }
+    }
+
+    function filterOrders(api) {
+        var body = {
+            data : {}
+        }
+
+        var config = [{
+            headers: {
+              'XXX': 0
+            },     
+        }];
+
+        var url = '';
+        url = api;
+
+        $http.get(url, body, config).then(function successCallback(response) {
+            if(response.status == 200){
+                $scope.Orders = response.data;
+            } else{
+                $scope.Orders = [];
+            }
+        }, function errorCallback(response) {
+            $scope.Orders = [];
+            $scope.Controls.Alert.Class = 'alert-danger';
+            $scope.Controls.Alert.Hide = 0;
+            $scope.Controls.Alert.Message = 'Unable to connect to server!';
+
+            setTimeout(function(){
+                $scope.Controls.Alert.Class = '';
+                $scope.Controls.Alert.Hide = 1;
+                $scope.Controls.Alert.Message = '';
+                $scope.$digest();
+            }, 1500);
+        });
+    }
+
+    $scope.filterList = function() {
+        console.log("filterList", $scope.filter);
+        if(!$scope.filter || $scope.filter == 4) {
+            GetOrders();
+        } else {
+            var api = AppService.API_BASE_URL+'orders/get/status/'+$scope.filter;
+            filterOrders(api);
+        }
+        
     }
 }); 
