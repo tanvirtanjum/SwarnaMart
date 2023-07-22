@@ -144,6 +144,7 @@ app.controller('ManageAccounts.Controller', function ($scope, $http, $location, 
     $scope.filterOption = function() {
         $scope.Controls.Div.Hide = $scope.filterChoose == null || !$scope.filterChoose || $scope.filterChoose < 1 ? 1 : 0;
         $scope.MonthYear = null;
+        GetOrders();
     }
 
     function filterOrders(api) {
